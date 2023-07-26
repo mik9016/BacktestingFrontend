@@ -1,5 +1,5 @@
 <script lang="ts">
-import {PropType, defineEmits} from 'vue';
+import {PropType} from 'vue';
 
 export default {
   props: {
@@ -26,6 +26,10 @@ export default {
     errorMsg: {
       type: String as PropType<string>,
       required: false
+    },
+    autofocus: {
+      type: Boolean as PropType<boolean>,
+      required: false
     }
 
   },
@@ -44,7 +48,7 @@ export default {
 <template>
   <div class="input-wrapper ">
     <label :for="id">{{ label }}</label>
-    <input :type="type" :id="id" :name="name" @input="emitValue"/>
+    <input :type="type" :id="id" :name="name" @input="emitValue" :autofocus="autofocus"/>
     <p v-if="showError" class="error">{{ errorMsg}}</p>
   </div>
 </template>
@@ -66,13 +70,12 @@ label {
 }
 
 input {
-  border: 1px solid #ccc;
+  border: 1px solid var(--btn-border-color);
   border-radius: 4px;
   font-size: 16px;
   color: var(--text-light-color);
   font-family: 'Poppins', sans-serif;
   background-color: var(--card-background);
-  border: 1px solid var(--input-border-color);
   height: 42px;
   padding-left: 1rem;
   width: 17rem;

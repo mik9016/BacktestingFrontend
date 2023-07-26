@@ -72,6 +72,10 @@ const login = () => {
 
 }
 
+const goToRegister = () => {
+  router.push('register')
+}
+
 const errMsg = "Email is not Valid"
 </script>
 
@@ -79,12 +83,11 @@ const errMsg = "Email is not Valid"
   <section class="wrapper center-flex">
     <h1 class="title siteTitle">Backtester.io</h1>
     <h2 class="subtitle">Sign In</h2>
-    <p>Need an account? <a class="link" target="_blank" referrerpolicy="no-referrer">Sign Up</a></p>
+    <p>Need an account?
+      <a class="link" target="_blank" referrerpolicy="no-referrer" @click="goToRegister">Sign Up</a></p>
     <div class="card">
-      <TextInput label="Username" name="username" id="username" type="text" @typed="validateUsername"
-      />
       <TextInput label="Email" name="email" id="email" type="text" @typed="validateEmail" :error-msg="errMsg"
-                 :show-error="showEmailErr"/>
+                 :show-error="showEmailErr" :autofocus="true"/>
       <TextInput label="Password" name="password" id="password" type="password" @typed="validatePassword"
       />
       <p class="ok" v-if="isOk">{{message}}</p>
@@ -108,6 +111,7 @@ const errMsg = "Email is not Valid"
     font-weight: var(--font-weight-big);
     font-size: var(--font-big);
     margin-bottom: .4rem;
+    font-family: 'Montserrat', sans-serif;
   }
   .siteTitle{
     margin: 1rem;
