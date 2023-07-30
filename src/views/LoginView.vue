@@ -5,10 +5,10 @@ import Button from "@/components/Button.vue";
 import {ref} from "vue";
 import {useUserStore} from '@/stores/UserStore'
 import router from "@/router";
+import NoMenuLayout from "@/layouts/NoMenuLayout.vue";
 
 
 interface ILoginData {
-  username: string,
   email: string,
   password: string
 }
@@ -16,9 +16,9 @@ interface ILoginData {
 
 const store = useUserStore();
 const showEmailErr = ref(false)
-const isOk = ref(false)
+const showAuthErr = ref(false)
+const authErrMsg = ref<string>('')
 const loginData = ref<ILoginData>({
-  username: '',
   email: '',
   password: ''
 })
@@ -28,31 +28,21 @@ const validateEmail = (data: string) => {
   loginData.value.email = data
 }
 
-const validatePassword = (data: string): void => {
+const setPassword = (data: string): void => {
   loginData.value.password = data
-}
-const validateUsername = (data: string): void => {
-  loginData.value.username = data
-}
-
-const isPasswordValid = (pass: string): boolean => {
-  return pass.length <= 8
 }
 
 const isEmailValid = (email: string): boolean => {
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return !emailPattern.test(email);
 }
-const message = 'YAY!'
 
 const login = () => {
   const body = {
-    username: loginData.value.username,
     password: loginData.value.password,
-    email: loginData.value.email
+    email: loginData.value.email,
   }
-  console.log(body)
-  const url = 'https://localhost:7051/api/auth/login'
+  const url = `${import.meta.env.VITE_BACKEND_URL}/auth/login`
 
   fetch(url, {
     headers: {
@@ -62,12 +52,19 @@ const login = () => {
     body: JSON.stringify(body)
   }).then(response => response.json())
       .then(json => {
-        store.setAuthToken(json.token)
-        store.setUser(json.user)
-      }).then(() => {
-        isOk.value = true
-        router.push('/');
-    // redirect to different site or show error
+        showAuthErr.value = false
+        if (json.status === 200) {
+          store.setAuthToken(json["token"])
+          store.setUser(json.user)
+          store.setIsAuthenticated(true)
+          router.push('/');
+        } else {
+          showAuthErr.value = true
+          authErrMsg.value = json["msg"]
+        }
+      }).catch(er => {
+          authErrMsg.value = er["msg"]
+          showAuthErr.value = true
   })
 
 }
@@ -77,49 +74,33 @@ const goToRegister = () => {
 }
 
 const errMsg = "Email is not Valid"
+
 </script>
 
 <template>
+  <NoMenuLayout/>
   <section class="wrapper center-flex">
-    <h1 class="title siteTitle">Backtester.io</h1>
     <h2 class="subtitle">Sign In</h2>
     <p>Need an account?
       <a class="link" target="_blank" referrerpolicy="no-referrer" @click="goToRegister">Sign Up</a></p>
     <div class="card">
       <TextInput label="Email" name="email" id="email" type="text" @typed="validateEmail" :error-msg="errMsg"
                  :show-error="showEmailErr" :autofocus="true"/>
-      <TextInput label="Password" name="password" id="password" type="password" @typed="validatePassword"
+      <TextInput label="Password" name="password" id="password" type="password" @typed="setPassword"
       />
-      <p class="ok" v-if="isOk">{{message}}</p>
       <Button text="Login" @click="login"/>
     </div>
+    <p v-if="showAuthErr" class="error">{{authErrMsg}}</p>
   </section>
 </template>
 
 <style lang="css" scoped>
 
-.ok{
-  color: green;
-}
 .wrapper {
   width: 100%;
   height: 100vh;
   background-color: var(--background-Color);
   color: var(--text-light-color);
-
-  .title {
-    font-weight: var(--font-weight-big);
-    font-size: var(--font-big);
-    margin-bottom: .4rem;
-    font-family: 'Montserrat', sans-serif;
-  }
-  .siteTitle{
-    margin: 1rem;
-    position: absolute;
-    top: 0;
-    left: 0;
-    font-weight: 500;
-  }
 
   .subtitle {
     font-weight: var(--font-weight-big);
@@ -147,7 +128,10 @@ const errMsg = "Email is not Valid"
   }
 }
 
-
+.error{
+  color: var(--error-color);
+  margin-bottom: 0;
+}
 </style>
 
 

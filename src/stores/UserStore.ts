@@ -26,6 +26,7 @@ interface IUser{
 // the first argument is a unique id of the store across your application
 export const useUserStore = defineStore('counter', () => {
     const authToken = ref<string>('')
+    const isAuthenticated = ref<boolean>(false)
     const user = ref<IUser>({
         id: 0,
         username: '',
@@ -37,11 +38,16 @@ export const useUserStore = defineStore('counter', () => {
     const setAuthToken = (token:string) => {
         authToken.value = token
     }
+    const setIsAuthenticated = (flag:boolean) => {
+        isAuthenticated.value = flag
+    }
+    const getIsAuthenticated = computed(() => isAuthenticated)
+
     const getUser = computed(() => user)
     const setUser = (val: IUser) => {
         user.value = val;
     }
 
 
-    return { authToken, user, getAuthToken,setAuthToken, getUser ,setUser}
+    return { authToken, user, getAuthToken,setAuthToken, getUser ,setUser,getIsAuthenticated,setIsAuthenticated}
 })
