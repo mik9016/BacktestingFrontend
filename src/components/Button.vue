@@ -32,10 +32,12 @@ export default {
   font-size: 16px;
   border-radius: 6px;
   cursor: pointer;
-  border: 1px solid var(--text-light-color);
+  border: 1px solid var(--btn-border-color);
 }
 button:hover{
   background-color: var(--btn-hover-color);
+  border: 1px solid var(--text-light-color);
+
 }
 
 </style>
