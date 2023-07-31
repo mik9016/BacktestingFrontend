@@ -34,14 +34,14 @@ export const useUserStore = defineStore('counter', () => {
         email: '',
         trades: [],
     })
-    const getAuthToken = computed(() => authToken)
+    const getAuthToken = computed(() => authToken.value)
     const setAuthToken = (token:string) => {
         authToken.value = token
     }
     const setIsAuthenticated = (flag:boolean) => {
         isAuthenticated.value = flag
     }
-    const getIsAuthenticated = computed(() => isAuthenticated)
+    const getIsAuthenticated = computed(() => isAuthenticated.value)
 
     const getUser = computed(() => user)
     const setUser = (val: IUser) => {
