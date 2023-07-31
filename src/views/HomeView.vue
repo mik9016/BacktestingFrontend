@@ -6,6 +6,8 @@
 </template>
 
 <script setup lang="ts">
+import {useUserStore} from "@/stores/UserStore";
+const store = useUserStore()
 
 </script>
 

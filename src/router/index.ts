@@ -11,6 +11,7 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+      meta: {auth: true},
     },
     {
       path: '/login',
@@ -30,11 +31,12 @@ const router = createRouter({
     }
   ]
 })
-
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
-
-  if (to.name !== 'login' && to.name !== 'register' && userStore.getIsAuthenticated) next({ name: 'login' })
+  const isforLoggedInUsers = ():boolean => {
+   return  to.name !== 'login' && to.name !== 'register'
+  }
+  if (isforLoggedInUsers() && !userStore.getIsAuthenticated) next({ name: 'login' })
   else next()
 })
 
