@@ -1,6 +1,11 @@
 <script lang="ts">
 import {PropType} from 'vue';
 
+export enum SizeType {
+  Big = 'Big',
+  Small = 'Small'
+}
+
 export default {
   props: {
     id: {
@@ -30,16 +35,31 @@ export default {
     autofocus: {
       type: Boolean as PropType<boolean>,
       required: false
-    }
+    },
+    size: {
+      type: String as PropType<SizeType>,
+      required: false,
+      default: SizeType.Big
+    },
+    disabled: {
+      type: Boolean as PropType<boolean>,
+      required: false,
+      default: false
+    },
 
   },
   setup(props, {emit}) {
-    const emitValue = (e) => {
-      emit("typed", e.target.value)
+    const emitValue = (e: any): void => {
+      emit("typed", e?.target?.value)
+    }
+
+    const setSize = () => {
+      return props.size === SizeType.Big ? 'input-size-big' : 'input-size-small'
     }
 
     return {
       emitValue,
+      setSize
     };
   },
 };
@@ -48,8 +68,9 @@ export default {
 <template>
   <div class="input-wrapper ">
     <label :for="id">{{ label }}</label>
-    <input :type="type" :id="id" :name="name" @input="emitValue" :autofocus="autofocus"/>
-    <p v-if="showError" class="error">{{ errorMsg}}</p>
+    <input :class="`${setSize()}`" :type="type" :id="id" :name="name" @input="emitValue"
+           :autofocus="autofocus" :disabled="disabled"/>
+    <p v-if="showError" class="error">{{ errorMsg }}</p>
   </div>
 </template>
 
@@ -64,7 +85,7 @@ label {
   font-size: 16px;
 }
 
-.error{
+.error {
   color: var(--error-color);
   margin-bottom: 0;
 }
@@ -78,8 +99,26 @@ input {
   background-color: var(--card-background);
   height: 42px;
   padding-left: 1rem;
-  width: 17rem;
 
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.input-size-big {
+  width: 17rem;
+}
+
+.input-size-small {
+  width: 9rem;
 }
 
 
